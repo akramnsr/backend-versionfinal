@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="fr">
+
+<head th:replace="~{fragments/layout :: layoutHead('Liste des quiz')}"></head>
+
+<body th:replace="~{fragments/layout :: layoutBody(
+                      ~{fragments/navbar :: navbar},
+                      ~{::content}
+                    )}">
+
+<div th:fragment="content" class="container mt-4">
+
+    <h1>Liste des quiz</h1>
+
+    <a th:href="@{/admin/quiz/nouveau}"
+       class="btn btn-primary mb-3">
+        Créer un nouveau quiz
+    </a>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Image</th>
+            <th>ID</th>
+            <th>Titre</th>
+            <th>Description</th>
+            <th>Formation</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody th:each="quiz : ${quizzes}">
+        <tr>
+            <!-- Image -->
+            <td>
+                <img th:if="${quiz.imageUrl}"
+                     th:src="@{'/uploads/' + ${quiz.imageUrl}}"
+                     class="img-thumbnail"
+                     style="max-width:100px"
+                     alt="Visuel du quiz"/>
+            </td>
+
+            <!-- ID : lien vers détail -->
+            <td>
+                <a th:href="@{/admin/quiz/{id}(id=${quiz.id})}"
+                   th:text="${quiz.id}"></a>
+            </td>
+
+            <!-- Titre : lien vers détail -->
+            <td>
+                <a th:href="@{/admin/quiz/{id}(id=${quiz.id})}"
+                   th:text="${quiz.titre}"></a>
+            </td>
+
+            <!-- Description -->
+            <td th:text="${quiz.description}">Description</td>
+
+            <!-- Formation -->
+            <td th:text="${quiz.formation != null} ? ${quiz.formation.titre} : '-'">Formation</td>
+
+            <!-- Actions -->
+            <td>
+                <a th:href="@{/admin/quiz/{id}/modifier(id=${quiz.id})}"
+                   class="btn btn-sm btn-outline-secondary">
+                    Modifier
+                </a>
+
+                <form th:action="@{/admin/quiz/{id}/supprimer(id=${quiz.id})}"
+                      method="post"
+                      style="display:inline"
+                      onsubmit="return confirm('Vraiment supprimer ce quiz ?');">
+                    <button type="submit"
+                            class="btn btn-sm btn-outline-danger">
+                        Supprimer
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+</body>
+</html>
