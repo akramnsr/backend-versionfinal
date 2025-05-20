@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-    build:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read #This is required for actions/checkout
@@ -24,15 +24,14 @@ jobs:
           java-version: '17'
           distribution: 'microsoft'
 
-      - name: Build with Maven (skip tests)
-        run: mvn clean install -DskipTests
+      - name: Build with Maven
+        run: mvn clean install
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
           path: '${{ github.workspace }}/target/*.war'
-
 
   deploy:
     runs-on: ubuntu-latest
@@ -53,9 +52,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_35C5AAB8665243AAA4A28BEFBAF624E7 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BC4505B3C17A4E28894E5C581145954C }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CD992BCEF296439092DF2C44CB2407C9 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_4D6FAC4076B24BC29E0DA5398B50FC1C }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F69FD9542052432F9B30D12F65374F4D }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DB0063FA23DB43619F5BFB259DB506A8 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
