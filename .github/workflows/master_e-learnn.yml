@@ -1,3 +1,6 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
 name: Build and deploy WAR app to Azure Web App - e-learnn
 
 on:
@@ -10,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: read #This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -22,18 +25,13 @@ jobs:
           distribution: 'microsoft'
 
       - name: Build with Maven
-        run: mvn clean install -DskipTests
-
-      - name: Rename WAR to ROOT.war
-        run: |
-          WAR_FILE=$(ls target/*.war | head -n 1)
-          mv "$WAR_FILE" target/ROOT.war
+        run: mvn clean install
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: target/ROOT.war
+          path: '${{ github.workspace }}/target/*.war'
 
   deploy:
     runs-on: ubuntu-latest
@@ -42,8 +40,8 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write
-      contents: read
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
     steps:
       - name: Download artifact from build job
@@ -54,9 +52,9 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1F82C938A0A14A74A38DDBB631BAB617 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_FEF0E890257C44799F13EE35679665F5 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_E80FCF35B924422083C37FBC1AD4E4E4 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_35C5AAB8665243AAA4A28BEFBAF624E7 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BC4505B3C17A4E28894E5C581145954C }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CD992BCEF296439092DF2C44CB2407C9 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -64,4 +62,5 @@ jobs:
         with:
           app-name: 'e-learnn'
           slot-name: 'Production'
-          package: 'ROOT.war'
+          package: '*.war'
+          
